@@ -1,47 +1,28 @@
-var Fact = function(name, args) {
-     this.name = name;
-     this.args = [args];
-};
+var Facts = require('./fact');
+var Rules = require('./rule');
+
+var Interpreter = function () {
  
+    this.facts = new Facts();    
 
-var facts = [];
-var rules =[];
+    this.rules = new Rules(this.facts);
+ 
+    this.parseDB = function (db) {
 	
-this.checkQuery = function (params) {
-	 
-        return true;
-    }
+        this.facts.getFacts(db);
+        this.rules.getRules(db)
+    };
 
-this.parseDB =  function(db){
-	//CheckDB else => false
-
-	db.map(function(line){(CheckRule(line) ? AddRule(line): AddFact(line))});	
+    this.checkQuery = function (query) {
+        if (this.rules.haveRule(getQueryName(query)))
+            return this.rules.checkQuery(query);
+        else
+            return this.facts.checkQuery(query);
+    };
 };
 
-function CheckRule(line){	
-    line.includes(":-");
+var getQueryName = function (query) {
+    return query.split("(", 1).toString()
 };
 
-function AddRule(line)
-{
-	//TODO
-};
-
-function ParseFact(line){
-	var ini = line.indexOf("(");  		
-	var last = line.indexOf(")");   	
-	return [line.substring(0,ini), line.substring(ini+1,last)];
-}
-function AddFact(line){
-	var fact = ParseFact(line);		
-	for (i = 0; i < facts.length; i++) { 			
-    		if(facts[i].name == fact[0]) { facts[i].args.push(fact[1])					
-					return;
-				}
-		}
-	facts.push(new Fact(fact[0],fact[1]));
-};
-
-
-
-module.exports = Interpreter;
+ module.exports = Interpreter;
