@@ -6,6 +6,7 @@ var Rules = function (facts) {
     this.getRules = function (db) {
         var actualRules = db.filter(isRule);
         var rulesNames = actualRules.map(getRuleName);
+        this.rules = hashMap(rulesNames, actualRules)
     };
 
 
@@ -35,6 +36,7 @@ var Rules = function (facts) {
 
 
         var replacedFacts = replaceMap(ruleFacts, 
+	hashMap(ruleParams.split(", "), qParams.split(", ")));
 
         replacedFacts = replacedFacts.split("), ");
         return withQ(replacedFacts)
@@ -77,6 +79,7 @@ var getqName = function (query) {
     return query.split("(", 1).toString()
 };
 
+    var hashMap = function (keys, values) {
         var map = new Map();
         for (var i = 0; i < keys.length; i++) {
             map.set(keys[i], values[i])
